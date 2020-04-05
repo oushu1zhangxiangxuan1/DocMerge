@@ -1,4 +1,7 @@
 from docx import Document
+from docx.enum.style import WD_STYLE_TYPE
+from docx.oxml.ns import qn
+from docx.shared import Pt
 
 
 def main():
@@ -7,6 +10,17 @@ def main():
     doc_en = Document('/Users/johnsaxon/Documents/翻译.docx')
 
     doc_out = Document()
+
+    styles = doc_out.styles
+    s_ch = styles.add_style("style_ch", WD_STYLE_TYPE.PARAGRAPH)
+    s_ch.font.name = '宋体'
+    s_ch.font.size = Pt(14)
+    s_ch.element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+
+    s_en = styles.add_style("style_en", WD_STYLE_TYPE.PARAGRAPH)
+    s_en.font.name = 'Times New Roman'
+    s_en.font.size = Pt(14)
+    s_en.element.rPr.rFonts.set(qn('w:eastAsia'), 'Times New Roman')
 
     # print(doc_ch.styles['Body Text'].font.name)
     print(doc_en.styles)
@@ -45,11 +59,11 @@ def main():
     for i in range(len_out):
         # print(doc_ch.paragraphs[i].text)
         # print(doc_en.paragraphs[i].text)
-        t = doc_out.add_paragraph(
-            doc_ch.paragraphs[i].text, doc_ch.paragraphs[i].style)
+        doc_out.add_paragraph(
+            doc_ch.paragraphs[i].text, s_ch)
         # t.style = doc_ch.paragraph_format.font
         doc_out.add_paragraph(
-            doc_en.paragraphs[i].text, doc_ch.paragraphs[i].style)
+            doc_en.paragraphs[i].text, s_en)
 
     doc_out.save("合并.docx")
 

@@ -1,5 +1,8 @@
 from docx import Document
 import os
+from docx.enum.style import WD_STYLE_TYPE
+from docx.oxml.ns import qn
+from docx.shared import Pt
 
 
 def merge(ch, en, out):
@@ -8,6 +11,17 @@ def merge(ch, en, out):
     doc_en = Document(en)
 
     doc_out = Document()
+
+    styles = doc_out.styles
+    s_ch = styles.add_style("style_ch", WD_STYLE_TYPE.PARAGRAPH)
+    s_ch.font.name = '宋体'
+    s_ch.font.size = Pt(14)
+    s_ch.element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+
+    s_en = styles.add_style("style_en", WD_STYLE_TYPE.PARAGRAPH)
+    s_en.font.name = 'Times New Roman'
+    s_en.font.size = Pt(14)
+    s_en.element.rPr.rFonts.set(qn('w:eastAsia'), 'Times New Roman')
 
     len_ch = len(doc_ch.paragraphs)
 
@@ -31,9 +45,9 @@ def merge(ch, en, out):
 
     for i in range(len_out):
         doc_out.add_paragraph(
-            doc_ch.paragraphs[i].text, doc_ch.paragraphs[i].style)
+            doc_ch.paragraphs[i].text, s_ch)
         doc_out.add_paragraph(
-            doc_en.paragraphs[i].text, doc_ch.paragraphs[i].style)
+            doc_en.paragraphs[i].text, s_en)
 
     doc_out.save(out)
 
